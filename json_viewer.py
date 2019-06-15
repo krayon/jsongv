@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 
 __author__ = "Ashwin Nanjappa"
 
@@ -62,7 +62,7 @@ class JsonView(QtWidgets.QWidget):
 
         self.tree_widget = QtWidgets.QTreeWidget()
         self.tree_widget.setHeaderLabels(["Key", "Value"])
-        self.tree_widget.header().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
+        #KRAYON:Allow Resize#self.tree_widget.header().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
 
         root_item = QtWidgets.QTreeWidgetItem(["Root"])
         self.recurse_jdata(jdata, root_item)
