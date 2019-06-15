@@ -1,6 +1,11 @@
 #!/usr/bin/python3
 
-__author__ = "Ashwin Nanjappa";
+__author__ = "Ashwin Nanjappa, Krayon";
+__credits__ = ["Ashwin Nanjappa", "Krayon"];
+__license__ = "Apache 2.0";
+__version__ = "0.0.2";
+__maintainer__ = "Krayon";
+__email__ = "krayon.git@qdnx.org";
 
 # GUI viewer to view JSON data as tree.
 # Ubuntu packages needed:
@@ -48,6 +53,7 @@ class JsonView(QtWidgets.QWidget): #{
         super(JsonView, self).__init__();
 
         self.find_box = None;
+        self.find_result = None;
         self.tree_widget = None;
         self.text_to_titem = TextToTreeItem();
         self.find_str = "";
@@ -89,6 +95,10 @@ class JsonView(QtWidgets.QWidget): #{
         self.find_box = QtWidgets.QLineEdit();
         self.find_box.returnPressed.connect(self.find_button_clicked);
 
+        # Find result
+        self.find_result = QtWidgets.QLabel('');
+        self.find_result.setStyleSheet('color: default; font-style: italic;');
+
         # Find Button
         find_button = QtWidgets.QPushButton("Find");
         find_button.clicked.connect(self.find_button_clicked);
@@ -97,7 +107,11 @@ class JsonView(QtWidgets.QWidget): #{
         layout.addWidget(self.find_box);
         layout.addWidget(find_button);
 
-        return layout;
+        layout2 = QtWidgets.QVBoxLayout();
+        layout2.addLayout(layout);
+        layout2.addWidget(self.find_result);
+
+        return layout2;
     #}
 
     def find_button_clicked(self): #{
@@ -105,20 +119,41 @@ class JsonView(QtWidgets.QWidget): #{
 
         # Very common for user to click Find on empty string
         if find_str == "": #{
+            self.find_result.setText('');
             return;
         #}
 
+        self.find_result.setStyleSheet('color: green; font-style: italic;');
+
         # New search string
         if find_str != self.find_str: #{
+            self.found_idx = -1;
             self.find_str = find_str;
             self.found_titem_list = self.text_to_titem.find(self.find_str);
-            self.found_idx = 0;
-        else: #}{
-            item_num = len(self.found_titem_list);
-            self.found_idx = (self.found_idx + 1) % item_num;
+            self.find_result.setStyleSheet('color: green; font-style: italic; font-weight: bold;');
         #}
 
-        self.tree_widget.setCurrentItem(self.found_titem_list[self.found_idx]);
+        if len(self.found_titem_list) <= 0: #{
+            # Not found
+            self.find_result.setText('No results found');
+            self.find_result.setStyleSheet('color: red; font-style: italic; font-weight: bold;');
+            return;
+        #}
+
+        # String is found
+        matches = len(self.found_titem_list);
+        self.found_idx += 1;
+        if (self.found_idx >= matches): #{
+            # Wrap around
+            self.found_idx = 0;
+            self.find_result.setStyleSheet('color: orange; font-style: italic;');
+        #}
+
+        self.find_result.setText("%d results found, result: %d" % ( matches, self.found_idx+1 ));
+
+        if (self.found_idx >= 0): #{
+            self.tree_widget.setCurrentItem(self.found_titem_list[self.found_idx]);
+        #}
     #}
 
     def recurse_jdata(self, jdata, tree_widget): #{
