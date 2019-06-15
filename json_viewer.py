@@ -173,11 +173,12 @@ def main():
     if (len(sys.argv) <= 1): #{
         dialog = QtWidgets.QMessageBox();
         dialog.setIcon(QtWidgets.QMessageBox.Critical);
-        dialog.setWindowTitle("JSON Viewer");
-        dialog.setText("ERROR: No file specified");
+        dialog.setWindowTitle('JSON Viewer');
+        dialog.setText('ERROR: No file specified');
         dialog.setStandardButtons(QtWidgets.QMessageBox.Close);
         dialog.setDefaultButton(QtWidgets.QMessageBox.Close);
-        sys.exit(dialog.buttonRole(dialog.button(dialog.exec_())))
+        sys.exit(dialog.buttonRole(dialog.button(dialog.exec_())));
+    #}
 
     json_viewer = JsonViewer()
     sys.exit(qt_app.exec_())
