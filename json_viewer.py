@@ -23,6 +23,7 @@ from PyQt5 import QtGui;
 from PyQt5 import QtWidgets;
 
 class TextToTreeItem: #{
+
     def __init__(self): #{
         self.text_list = [];
         self.titem_list = [];
@@ -49,7 +50,8 @@ class TextToTreeItem: #{
 #}
 
 class JsonView(QtWidgets.QWidget): #{
-    def __init__(self, fpath): #{
+
+    def __init__(self, jdata, fpath=''): #{
         super(JsonView, self).__init__();
 
         self.find_box = None;
@@ -60,8 +62,6 @@ class JsonView(QtWidgets.QWidget): #{
         self.found_titem_list = [];
         self.found_idx = 0;
 
-        jfile = open(fpath);
-        jdata = json.load(jfile, object_pairs_hook=collections.OrderedDict);
 
         # Find UI
         find_layout = self.make_find_ui();
@@ -190,11 +190,14 @@ class JsonView(QtWidgets.QWidget): #{
 #}
 
 class JsonViewer(QtWidgets.QMainWindow): #{
+
     def __init__(self): #{
         super(JsonViewer, self).__init__();
 
         fpath = sys.argv[1];
-        json_view = JsonView(fpath);
+        jfile = open(fpath);
+        jdata = json.load(jfile, object_pairs_hook=collections.OrderedDict);
+        json_view = JsonView(jdata, fpath);
 
         self.setCentralWidget(json_view);
         self.setWindowTitle("JSON Viewer");
