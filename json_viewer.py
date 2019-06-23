@@ -3,7 +3,7 @@
 __author__ = "Ashwin Nanjappa, Abdul Arfan, Zhangxiao, Krayon";
 __credits__ = ["Ashwin Nanjappa", "Abdul Arfan", "Zhangxiao", "Krayon"];
 __license__ = "Apache 2.0";
-__version__ = "0.0.4";
+__version__ = "0.0.5";
 __maintainer__ = "Krayon";
 __email__ = "krayon.git@qdnx.org";
 
@@ -24,6 +24,8 @@ from PyQt5           import QtCore;
 from PyQt5           import QtGui;
 from PyQt5           import QtWidgets;
 from PyQt5.QtWidgets import QFileDialog, QAction;
+
+win_title = "JSON Viewer v%s" % (__version__);
 
 class TextToTreeItem: #{
 
@@ -232,7 +234,7 @@ class JsonViewer(QtWidgets.QMainWindow): #{
         filemenu.addAction(exitaction);
 
         self.setCentralWidget(self.json_view);
-        self.setWindowTitle("JSON Viewer");
+        self.setWindowTitle(win_title);
         self.show();
     #}
 
@@ -284,7 +286,7 @@ def main(): #{
         # Too many parameters
         dialog = QtWidgets.QMessageBox();
         dialog.setIcon(QtWidgets.QMessageBox.Critical);
-        dialog.setWindowTitle('JSON Viewer');
+        dialog.setWindowTitle(win_title);
         dialog.setText('ERROR: Too many parameters specified');
         dialog.setStandardButtons(QtWidgets.QMessageBox.Close);
         dialog.setDefaultButton(QtWidgets.QMessageBox.Close);
