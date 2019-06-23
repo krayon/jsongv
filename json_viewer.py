@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
-__author__ = "Ashwin Nanjappa, Abdul Arfan, Krayon";
-__credits__ = ["Ashwin Nanjappa", "Abdul Arfan", "Krayon"];
+__author__ = "Ashwin Nanjappa, Abdul Arfan, Zhangxiao, Krayon";
+__credits__ = ["Ashwin Nanjappa", "Abdul Arfan", "Zhangxiao", "Krayon"];
 __license__ = "Apache 2.0";
-__version__ = "0.0.3";
+__version__ = "0.0.4";
 __maintainer__ = "Krayon";
 __email__ = "krayon.git@qdnx.org";
 
@@ -17,11 +17,13 @@ import collections;
 import json;
 import sys;
 import fileinput;
+import os;
 
 # External
-from PyQt5 import QtCore;
-from PyQt5 import QtGui;
-from PyQt5 import QtWidgets;
+from PyQt5           import QtCore;
+from PyQt5           import QtGui;
+from PyQt5           import QtWidgets;
+from PyQt5.QtWidgets import QFileDialog, QAction;
 
 class TextToTreeItem: #{
 
@@ -191,54 +193,118 @@ class JsonView(QtWidgets.QWidget): #{
 #}
 
 class JsonViewer(QtWidgets.QMainWindow): #{
+    json_view = None;
+    cwd = os.getcwd();
+    ftype = "JSON Files (*.json)";
 
-    def __init__(self, jdata, caption): #{
+    def __init__(self, fpath, fdata): #{
         super(JsonViewer, self).__init__();
 
-        json_view = JsonView(jdata, caption);
+        if (fpath == ''): #{
+            if (fdata == ''): #{
+                # No file loaded
+                fpath='';
+                fdata='{}';
+            else: #}{
+                # Data from stdin
+                fpath='stdin (Standard In)';
+            #}
 
-        self.setCentralWidget(json_view);
+            jdata = json.loads(fdata, object_pairs_hook=collections.OrderedDict);
+            self.json_view = JsonView(jdata, fpath);
+        else: #}{
+            self.loadFile(fpath);
+        #}
+
+        openaction = QAction(QtGui.QIcon.fromTheme('document-open'), '&Open...', self);
+        openaction.triggered.connect(self.menuFileOpen)
+        openaction.setShortcut(QtGui.QKeySequence.Open);
+
+        exitaction = QAction(QtGui.QIcon.fromTheme('application-exit'), 'E&xit', self);
+        exitaction.triggered.connect(self.menuFileExit)
+        exitaction.setShortcuts([QtGui.QKeySequence.Quit, QtCore.Qt.Key_Escape]);
+
+        menubar = self.menuBar();
+
+        filemenu = menubar.addMenu('&File');
+        filemenu.addAction(openaction);
+        filemenu.addSeparator();
+        filemenu.addAction(exitaction);
+
+        self.setCentralWidget(self.json_view);
         self.setWindowTitle("JSON Viewer");
         self.show();
     #}
 
-    def keyPressEvent(self, e): #{
-        if e.key() == QtCore.Qt.Key_Escape: #{
-            self.close();
+    def menuFileExit(self): #{
+        self.close();
+    #}
+
+    def menuFileOpen(self): #{
+        fpath, ftype = QFileDialog.getOpenFileName(
+            self,
+            "Open new JSON file...",
+            self.cwd,
+            "All Files (*);;JSON Files (*.json)",
+            self.ftype
+        );
+        if (fpath != ''): #{
+            self.cwd = os.path.dirname(fpath);
+            self.loadFile(fpath);
+        #}
+        if (ftype != ''): #{
+            self.ftype = ftype;
         #}
     #}
 
+    def loadFile(self, fpath): #{
+        print("fpath: %s" % (fpath));
+        jfile = open(fpath);
+        jdata = json.load(jfile, object_pairs_hook=collections.OrderedDict);
+        print("jdata: %s" % (jdata));
+
+        self.json_view = JsonView(jdata, fpath);
+        self.setCentralWidget(self.json_view);
+    #}
+
 def main(): #{
+    fpath = '';
+    fdata = '';
+
     qt_app = QtWidgets.QApplication(sys.argv);
 
-    # If no file specified, tell user gracefully
-    if (len(sys.argv) <= 1): #{
+    if (
+        (
+            len(sys.argv) > 1 and
+            sys.argv[1] == '--' and
+            len(sys.argv) > 3
+        )
+        or len(sys.argv) > 2
+    ): #{
+        # Too many parameters
         dialog = QtWidgets.QMessageBox();
         dialog.setIcon(QtWidgets.QMessageBox.Critical);
         dialog.setWindowTitle('JSON Viewer');
-        dialog.setText('ERROR: No file specified');
+        dialog.setText('ERROR: Too many parameters specified');
         dialog.setStandardButtons(QtWidgets.QMessageBox.Close);
         dialog.setDefaultButton(QtWidgets.QMessageBox.Close);
         sys.exit(dialog.buttonRole(dialog.button(dialog.exec_())));
     #}
 
-    fpath = sys.argv[1];
+    if (len(sys.argv) > 1): #{
+        fpath = sys.argv[1];
+        if (fpath == '-'): fpath = '';
+        if (fpath == '--'): fpath = sys.argv[2];
 
-    # stdin?
-    if (fpath == "-"): #{
-        fpath = "stdin (Standard In)";
-        all_line = "";
-        for line in fileinput.input(): #{
-            all_line = all_line + line;
+        # stdin?
+        if (fpath == ''): #{
+            for line in fileinput.input(): #{
+                fdata = fdata + line;
+            #}
         #}
-
-        jdata = json.loads(all_line, object_pairs_hook=collections.OrderedDict);
-    else: #}{
-        jfile = open(fpath);
-        jdata = json.load(jfile, object_pairs_hook=collections.OrderedDict);
     #}
 
-    json_viewer = JsonViewer(jdata, fpath);
+    json_viewer = JsonViewer(fpath, fdata);
     sys.exit(qt_app.exec_());
 #}
 
