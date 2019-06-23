@@ -5,8 +5,9 @@
 Python3 script to view a JSON file as a tree in GUI.
 
 Fork of [ashwin/json-viewer](https://github.com/ashwin/json-viewer) with
-enhancements and cherry-picks from
-[arfan/json-viewer](https://github.com/arfan/json-viewer/) .
+some enhancements and cherry-picks from
+[arfan/json-viewer](https://github.com/arfan/json-viewer/) and
+[zhangxiao/json-viewer-windows](https://github.com/zhangxiao/json-viewer-windows/) .
 
 Invoke as:
 ```
