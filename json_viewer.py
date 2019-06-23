@@ -51,7 +51,7 @@ class TextToTreeItem: #{
 
 class JsonView(QtWidgets.QWidget): #{
 
-    def __init__(self, jdata, fpath=''): #{
+    def __init__(self, jdata, caption=''): #{
         super(JsonView, self).__init__();
 
         self.find_box = None;
@@ -80,7 +80,7 @@ class JsonView(QtWidgets.QWidget): #{
         layout.addWidget(self.tree_widget);
 
         # Group box
-        gbox = QtWidgets.QGroupBox(fpath);
+        gbox = QtWidgets.QGroupBox(caption);
         gbox.setLayout(layout);
 
         layout2 = QtWidgets.QVBoxLayout();
@@ -191,13 +191,10 @@ class JsonView(QtWidgets.QWidget): #{
 
 class JsonViewer(QtWidgets.QMainWindow): #{
 
-    def __init__(self): #{
+    def __init__(self, jdata, caption): #{
         super(JsonViewer, self).__init__();
 
-        fpath = sys.argv[1];
-        jfile = open(fpath);
-        jdata = json.load(jfile, object_pairs_hook=collections.OrderedDict);
-        json_view = JsonView(jdata, fpath);
+        json_view = JsonView(jdata, caption);
 
         self.setCentralWidget(json_view);
         self.setWindowTitle("JSON Viewer");
@@ -224,7 +221,10 @@ def main(): #{
         sys.exit(dialog.buttonRole(dialog.button(dialog.exec_())));
     #}
 
-    json_viewer = JsonViewer();
+    fpath = sys.argv[1];
+    jfile = open(fpath);
+    jdata = json.load(jfile, object_pairs_hook=collections.OrderedDict);
+    json_viewer = JsonViewer(jdata, fpath);
     sys.exit(qt_app.exec_());
 #}
 
