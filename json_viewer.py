@@ -238,15 +238,6 @@ def main(): #{
         jdata = json.load(jfile, object_pairs_hook=collections.OrderedDict);
     #}
 
-
-    #    if len(sys.argv) == 2:
-    #        fpath = sys.argv[1];
-    #        jfile = open(fpath);
-    #        jdata = json.load(jfile, object_pairs_hook=collections.OrderedDict);
-    #    else:
-    #
-    #    json_view = JsonView(jdata);
-
     json_viewer = JsonViewer(jdata, fpath);
     sys.exit(qt_app.exec_());
 #}
