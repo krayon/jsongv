@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
-__author__ = "Ashwin Nanjappa, Krayon";
-__credits__ = ["Ashwin Nanjappa", "Krayon"];
+__author__ = "Ashwin Nanjappa, Abdul Arfan, Krayon";
+__credits__ = ["Ashwin Nanjappa", "Abdul Arfan", "Krayon"];
 __license__ = "Apache 2.0";
-__version__ = "0.0.2";
+__version__ = "0.0.3";
 __maintainer__ = "Krayon";
 __email__ = "krayon.git@qdnx.org";
 
@@ -16,6 +16,7 @@ import argparse;
 import collections;
 import json;
 import sys;
+import fileinput;
 
 # External
 from PyQt5 import QtCore;
@@ -222,8 +223,30 @@ def main(): #{
     #}
 
     fpath = sys.argv[1];
-    jfile = open(fpath);
-    jdata = json.load(jfile, object_pairs_hook=collections.OrderedDict);
+
+    # stdin?
+    if (fpath == "-"): #{
+        fpath = "stdin (Standard In)";
+        all_line = "";
+        for line in fileinput.input(): #{
+            all_line = all_line + line;
+        #}
+
+        jdata = json.loads(all_line, object_pairs_hook=collections.OrderedDict);
+    else: #}{
+        jfile = open(fpath);
+        jdata = json.load(jfile, object_pairs_hook=collections.OrderedDict);
+    #}
+
+
+    #    if len(sys.argv) == 2:
+    #        fpath = sys.argv[1];
+    #        jfile = open(fpath);
+    #        jdata = json.load(jfile, object_pairs_hook=collections.OrderedDict);
+    #    else:
+    #
+    #    json_view = JsonView(jdata);
+
     json_viewer = JsonViewer(jdata, fpath);
     sys.exit(qt_app.exec_());
 #}
