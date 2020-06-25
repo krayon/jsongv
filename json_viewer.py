@@ -76,6 +76,8 @@ class JsonView(QtWidgets.QWidget): #{
         self.tree_widget.setHeaderLabels(["Key", "Value"]);
         #KRAYON:Allow Resize#self.tree_widget.header().setSectionResizeMode(QtWidgets.QHeaderView.Stretch);
 
+        self.tree_widget.itemDoubleClicked.connect(self.double_clicked);
+
         root_item = QtWidgets.QTreeWidgetItem(["Root"]);
         self.recurse_jdata(jdata, root_item);
         self.tree_widget.addTopLevelItem(root_item);
@@ -159,6 +161,23 @@ class JsonView(QtWidgets.QWidget): #{
         if (self.found_idx >= 0): #{
             self.tree_widget.setCurrentItem(self.found_titem_list[self.found_idx]);
         #}
+    #}
+
+    def double_clicked(self, item, col): #{
+        global qt_app;
+
+        if (not item): return;
+
+        # If not shifted, and item is a container, do nothing
+        if (
+            not (qt_app.keyboardModifiers() & QtCore.Qt.ShiftModifier)
+            and item.childCount() > 0
+        ): #{
+            return;
+        #}
+
+        self.find_box.setText(item.text(col));
+        self.find_button_clicked();
     #}
 
     def recurse_jdata(self, jdata, tree_widget): #{
@@ -269,7 +288,10 @@ class JsonViewer(QtWidgets.QMainWindow): #{
         self.setCentralWidget(self.json_view);
     #}
 
+qt_app = None;
 def main(): #{
+    global qt_app;
+
     fpath = '';
     fdata = '';
 
