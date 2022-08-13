@@ -25,7 +25,7 @@ from PyQt5           import QtGui;
 from PyQt5           import QtWidgets;
 from PyQt5.QtWidgets import QFileDialog, QAction;
 
-win_title = "JSON Viewer v%s" % (__version__);
+win_title = "JSONGV (JSON GUI Viewer) v%s" % (__version__);
 
 class TextToTreeItem: #{
 
