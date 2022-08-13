@@ -3,7 +3,7 @@
 __author__ = "Ashwin Nanjappa, Abdul Arfan, Zhangxiao, Krayon";
 __credits__ = ["Ashwin Nanjappa", "Abdul Arfan", "Zhangxiao", "Krayon"];
 __license__ = "Apache 2.0";
-__version__ = "0.0.5";
+__version__ = "0.1.0";
 __maintainer__ = "Krayon";
 __email__ = "krayon.git@qdnx.org";
 
